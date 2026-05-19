@@ -3,15 +3,20 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "clean": "rm -rf .next",
+    "kill": "fuser -k 3000/tcp 2>/dev/null; sleep 1; true",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "run:local": "npm run kill && npm run clean && next dev",
+    "run:prod": "npm run kill && npm run clean && next build && next start",
     "lint": "eslint"
   },
   "dependencies": {
     "next": "16.2.6",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "server-only": "^0.0.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
