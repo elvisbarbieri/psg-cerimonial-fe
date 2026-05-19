@@ -15,6 +15,107 @@ function isVideoUrl(url: string) {
   return /\.(mp4|webm|ogg|mov)(\?|$)/i.test(url);
 }
 
+const FILL_IMG_CLASS = "absolute inset-0 h-full w-full object-cover";
+
+/**
+ * Tries Next.js image optimization first; on failure (e.g. very large originals
+ * that make the optimizer return 500), falls back to the CDN URL directly.
+ */
+function GalleryImage({
+  src,
+  alt,
+  fill,
+  className = "object-cover",
+  sizes,
+  priority,
+  loading,
+  width,
+  height,
+}: {
+  src: string;
+  alt: string;
+  fill?: boolean;
+  className?: string;
+  sizes?: string;
+  priority?: boolean;
+  loading?: "lazy" | "eager";
+  width?: number;
+  height?: number;
+}) {
+  const [useFallback, setUseFallback] = useState(false);
+
+  if (useFallback) {
+    if (fill) {
+      return (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={src}
+          alt={alt}
+          className={`${FILL_IMG_CLASS} ${className}`}
+          loading={loading ?? "lazy"}
+          decoding="async"
+        />
+      );
+    }
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={src}
+        alt={alt}
+        width={width}
+        height={height}
+        className={className}
+        loading={loading ?? "lazy"}
+        decoding="async"
+      />
+    );
+  }
+
+  if (fill) {
+    return (
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        sizes={sizes}
+        className={className}
+        priority={priority}
+        loading={loading}
+        onError={() => setUseFallback(true)}
+      />
+    );
+  }
+
+  return (
+    <Image
+      src={src}
+      alt={alt}
+      width={width ?? 1280}
+      height={height ?? 853}
+      sizes={sizes}
+      className={className}
+      onError={() => setUseFallback(true)}
+    />
+  );
+}
+
+function VideoThumbPreview({ src, label }: { src: string; label: string }) {
+  return (
+    <>
+      <video
+        className={`${FILL_IMG_CLASS} pointer-events-none`}
+        src={src}
+        muted
+        playsInline
+        preload="metadata"
+        aria-hidden="true"
+      />
+      <PlayBadge />
+      <span className="sr-only">{label}</span>
+    </>
+  );
+}
+
 function PlayBadge() {
   return (
     <div
@@ -61,7 +162,7 @@ function SlideMedia({
     );
   }
   return (
-    <Image
+    <GalleryImage
       src={item.imageUrl}
       alt={item.altText}
       fill
@@ -78,12 +179,15 @@ function ThumbMedia({ item }: { item: GalleryItemDTO }) {
   if (video) {
     return (
       <div className="w-full h-full relative bg-[#0c3008]">
-        <PlayBadge />
+        <VideoThumbPreview
+          src={item.imageUrl}
+          label={`Miniatura de vídeo: ${item.altText}`}
+        />
       </div>
     );
   }
   return (
-    <Image
+    <GalleryImage
       src={item.imageUrl}
       alt={`Miniatura: ${item.altText}`}
       fill
@@ -298,7 +402,7 @@ export default function GallerySection({ content }: GallerySectionProps) {
                 aria-label={selectedItem.altText}
               />
             ) : (
-              <Image
+              <GalleryImage
                 src={selectedItem.imageUrl}
                 alt={selectedItem.altText}
                 width={1280}
