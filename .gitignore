@@ -1,33 +1,38 @@
 # =============================================================================
-# HIGH RISK — secrets, deploy helpers, local docs (never commit)
+# HIGH RISK — never commit (secrets, deploy, local infra notes)
 # =============================================================================
 
-# API keys / environment (only .env.example is safe to share — placeholders only)
+# Environment — real keys live in .env.local / host settings only
 .env
 .env.*
 !.env.example
 
-# Deploy scripts and files that may embed Azure Function codes or subscription IDs
+# Local deploy helpers (API codes, Azure CLI, subscription IDs)
 /scripts/
-scripts/envvars
-scripts/syncazure.json
-scripts/*.sh
 
-# Local documentation (deploy steps, infra names, domain/DNS notes)
+# Private docs (deploy, DNS, domain — may name resources)
 /docs/
-*.md
-*.txt
 
-# Azure deploy artifacts (may bundle .env or server files)
+# Cursor / agent notes (not project docs)
+AGENTS.md
+CLAUDE.md
+
+# =============================================================================
+# SAFE TO COMMIT (explicit allowlist via negation)
+# =============================================================================
+# README.md        — setup only, no secrets (see !README.md below)
+# .env.example     — variable names + placeholders only
+
+*.md
+!README.md
+
+# =============================================================================
+# Deploy artifacts & keys
+# =============================================================================
 .azure-deploy/
 deploy.zip
 deploy-fe.zip
-*.zip
-
-# Keys and credential-like filenames
 *.pem
-*credentials*
-*secrets*
 
 # =============================================================================
 # dependencies
