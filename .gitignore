@@ -1,6 +1,37 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# =============================================================================
+# HIGH RISK — secrets, deploy helpers, local docs (never commit)
+# =============================================================================
 
+# API keys / environment (only .env.example is safe to share — placeholders only)
+.env
+.env.*
+!.env.example
+
+# Deploy scripts and files that may embed Azure Function codes or subscription IDs
+/scripts/
+scripts/envvars
+scripts/syncazure.json
+scripts/*.sh
+
+# Local documentation (deploy steps, infra names, domain/DNS notes)
+/docs/
+*.md
+*.txt
+
+# Azure deploy artifacts (may bundle .env or server files)
+.azure-deploy/
+deploy.zip
+deploy-fe.zip
+*.zip
+
+# Keys and credential-like filenames
+*.pem
+*credentials*
+*secrets*
+
+# =============================================================================
 # dependencies
+# =============================================================================
 /node_modules
 /.pnp
 .pnp.*
@@ -22,24 +53,6 @@
 
 # misc
 .DS_Store
-*.pem
-
-# Markdown, docs folder, plain-text, and local deploy scripts (may contain credentials)
-*.md
-/docs
-*.txt
-/scripts
-
-# Environment / secrets
-.env
-.env.local
-.env.*.local
-!.env.example
-
-# Azure deploy build artifacts
-.azure-deploy/
-deploy.zip
-deploy-fe.zip
 
 # debug
 npm-debug.log*
