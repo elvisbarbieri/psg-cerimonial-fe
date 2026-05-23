@@ -3,9 +3,13 @@ import type { NextConfig } from "next";
 
 const ONE_WEEK_SECONDS = 60 * 60 * 24 * 7;
 
+const projectRoot = path.join(__dirname);
+
 const nextConfig: NextConfig = {
+  output: "standalone",
+  outputFileTracingRoot: projectRoot,
   turbopack: {
-    root: path.resolve(__dirname),
+    root: projectRoot,
   },
   images: {
     minimumCacheTTL: ONE_WEEK_SECONDS,

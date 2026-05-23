@@ -10,6 +10,8 @@
     "start": "next start",
     "run:local": "npm run kill && npm run clean && next dev",
     "run:prod": "npm run kill && npm run clean && next build && next start",
+    "deploy:azure": "bash scripts/deploy-azure.sh",
+    "deploy:azure:fe": "bash scripts/deploy-azure-fe.sh",
     "lint": "eslint"
   },
   "dependencies": {

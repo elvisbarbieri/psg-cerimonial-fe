@@ -24,14 +24,27 @@
 .DS_Store
 *.pem
 
+# Markdown, plain-text docs, and local deploy scripts (may contain credentials)
+*.md
+*.txt
+/scripts
+
+# Environment / secrets
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Azure deploy build artifacts
+.azure-deploy/
+deploy.zip
+deploy-fe.zip
+
 # debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
-
-# env files (can opt-in for committing if needed)
-.env*
 
 # vercel
 .vercel

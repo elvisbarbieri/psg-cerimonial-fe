@@ -9,6 +9,7 @@ import {
   type FormEvent,
 } from "react";
 import { submitContactForm } from "@/app/actions/contact";
+import { logContactSubmitClientEvent } from "@/lib/contact-submit-logger.client";
 import type { ContactFormContentDTO } from "@/types/content";
 import {
   CalendarDaysIcon,
@@ -64,23 +65,39 @@ export default function ContactForm({ content }: ContactFormProps) {
     setIsSubmitted(false);
 
     startTransition(async () => {
-      const result = await submitContactForm({
-        name: formData.name,
-        email: formData.email,
-        eventDate: formData.eventDate,
-        invitees: formData.invitees,
-        eventType: formData.eventType,
-        message: formData.message,
-      });
+      try {
+        const result = await submitContactForm({
+          name: formData.name,
+          email: formData.email,
+          eventDate: formData.eventDate,
+          invitees: formData.invitees,
+          eventType: formData.eventType,
+          message: formData.message,
+        });
 
-      if (result.ok) {
-        setFormData(initialState);
-        setIsSubmitted(true);
-        router.refresh();
-        return;
+        if (result.ok) {
+          setFormData(initialState);
+          setIsSubmitted(true);
+          router.refresh();
+          return;
+        }
+
+        logContactSubmitClientEvent({
+          event: "contact_submit_failed",
+          reason: "server_action_returned_error",
+          serverError: result.error,
+        });
+        setErrorMessage(result.error);
+      } catch (error) {
+        logContactSubmitClientEvent({
+          event: "contact_submit_exception",
+          reason: "unexpected_client_or_action_throw",
+          error,
+        });
+        setErrorMessage(
+          "Ocorreu um erro inesperado ao enviar. Tente novamente em instantes.",
+        );
       }
-
-      setErrorMessage(result.error);
     });
   };
 
