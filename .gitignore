@@ -24,8 +24,9 @@
 .DS_Store
 *.pem
 
-# Markdown, plain-text docs, and local deploy scripts (may contain credentials)
+# Markdown, docs folder, plain-text, and local deploy scripts (may contain credentials)
 *.md
+/docs
 *.txt
 /scripts
 
